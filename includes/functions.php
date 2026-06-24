@@ -30,6 +30,7 @@ function get_flash() {
 }
 
 function sanitize($data) {
+    if ($data === null) return '';
     return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
 }
 
