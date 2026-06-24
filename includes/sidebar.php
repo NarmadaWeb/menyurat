@@ -2,7 +2,7 @@
 <aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant shadow-sm flex flex-col py-4 z-20">
     <div class="px-6 mb-8">
         <h1 class="text-xl text-primary font-bold">Admin Panel</h1>
-        <p class="text-sm text-on-surface-variant font-medium"><?= get_village_profile()['name'] ?></p>
+        <p class="text-sm text-on-surface-variant font-medium"><?= get_village_profile()['nama'] ?></p>
     </div>
     <nav class="flex-1 space-y-1 overflow-y-auto">
         <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="<?= base_url('admin/index.php') ?>">

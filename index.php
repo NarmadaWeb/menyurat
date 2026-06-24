@@ -5,12 +5,12 @@ require_once __DIR__ . '/includes/sidebar.php';
 
 <section class="relative h-[500px] flex items-center overflow-hidden rounded-3xl mx-6 mt-6">
     <div class="absolute inset-0 z-0">
-        <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=1920" alt="Village Hero"/>
+        <img class="w-full h-full object-cover" src="https://imgs.search.brave.com/j_UJV7F0AZSctFi4H3Uer44_uU-pFWH7L8eitvNu0NU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9iYW5r/dGFuYWguaWQvd3At/Y29udGVudC91cGxv/YWRzLzIwMjQvMDQv/bG9tYm9rdXRhcmEt/U3Vycm91bmRpbmct/SG90ZWwtRGV2ZWxv/cG1lbnQtMy02NDB4/NDI3LnBuZw" alt="Village Hero"/>
         <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
     </div>
     <div class="relative z-10 px-12 w-full">
         <div class="max-w-2xl text-white">
-            <h1 class="text-5xl font-bold mb-6 leading-tight">Selamat Datang di E-Office <?= $village['name'] ?></h1>
+            <h1 class="text-5xl font-bold mb-6 leading-tight">Selamat Datang di E-Office <?= $village['nama'] ?></h1>
             <p class="text-xl mb-8 opacity-90">Transformasi digital pelayanan publik untuk masyarakat yang lebih transparan, efisien, dan mudah diakses.</p>
             <div class="flex gap-4">
                 <a href="warga/pengajuan.php" class="bg-primary text-white px-8 py-3 rounded-xl font-semibold hover:bg-primary-container transition-all shadow-lg">

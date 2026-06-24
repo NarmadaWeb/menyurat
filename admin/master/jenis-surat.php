@@ -9,11 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['id']) && !empty($_POST['id'])) {
         $id = (int)$_POST['id'];
-        $stmt = $pdo->prepare("UPDATE mail_types SET name = ?, code = ? WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE jenis_surat SET nama = ?, kode = ? WHERE id = ?");
         $stmt->execute([$name, $code, $id]);
         $msg = "Jenis surat berhasil diperbarui.";
     } else {
-        $stmt = $pdo->prepare("INSERT INTO mail_types (name, code) VALUES (?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO jenis_surat (nama, kode) VALUES (?, ?)");
         $stmt->execute([$name, $code]);
         $msg = "Jenis surat baru ditambahkan.";
     }
@@ -22,11 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
-    $pdo->prepare("DELETE FROM mail_types WHERE id = ?")->execute([$id]);
+    $pdo->prepare("DELETE FROM jenis_surat WHERE id = ?")->execute([$id]);
     redirect(base_url('admin/master/jenis-surat.php'), 'Jenis surat dihapus.');
 }
 
-$types = $pdo->query("SELECT * FROM mail_types ORDER BY name ASC")->fetchAll();
+$types = $pdo->query("SELECT * FROM jenis_surat ORDER BY nama ASC")->fetchAll();
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/sidebar.php';
@@ -78,11 +78,11 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                     <?php endif; ?>
                     <?php foreach ($types as $type): ?>
                     <tr class="hover:bg-surface-container-low transition-colors">
-                        <td class="px-6 py-4 font-medium"><?= $type['name'] ?></td>
-                        <td class="px-6 py-4 font-mono text-sm"><?= $type['code'] ?: '-' ?></td>
+                        <td class="px-6 py-4 font-medium"><?= $type['nama'] ?></td>
+                        <td class="px-6 py-4 font-mono text-sm"><?= $type['kode'] ?: '-' ?></td>
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-end gap-2">
-                                <button onclick="editType(<?= $type['id'] ?>, '<?= $type['name'] ?>', '<?= $type['code'] ?>')" class="p-2 text-secondary hover:bg-secondary/10 rounded-lg">
+                                <button onclick="editType(<?= $type['id'] ?>, '<?= $type['nama'] ?>', '<?= $type['kode'] ?>')" class="p-2 text-secondary hover:bg-secondary/10 rounded-lg">
                                     <span class="material-symbols-outlined text-lg">edit</span>
                                 </button>
                                 <a href="?delete=<?= $type['id'] ?>" onclick="return confirm('Hapus jenis surat ini?')" class="p-2 text-error hover:bg-red-50 rounded-lg">

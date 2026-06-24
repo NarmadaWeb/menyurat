@@ -1,110 +1,124 @@
-CREATE TABLE roles (
+CREATE DATABASE IF NOT EXISTS menyurat;
+
+USE menyurat;
+
+CREATE TABLE peran (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    nama VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE users (
+CREATE TABLE pengguna (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
+    nama_lengkap VARCHAR(100) NOT NULL,
     email VARCHAR(100),
-    role_id INT,
-    status ENUM('active', 'inactive') DEFAULT 'active',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (role_id) REFERENCES roles(id)
+    peran_id INT,
+    status ENUM('aktif', 'tidak_aktif') DEFAULT 'aktif',
+    dibuat_pada TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (peran_id) REFERENCES peran(id)
 );
 
-CREATE TABLE village_profile (
+CREATE TABLE profil_desa (
     id INT PRIMARY KEY DEFAULT 1,
-    name VARCHAR(100) NOT NULL,
-    address TEXT,
-    phone VARCHAR(20),
+    nama VARCHAR(100) NOT NULL,
+    alamat TEXT,
+    telepon VARCHAR(20),
     email VARCHAR(100),
     logo VARCHAR(255),
-    kades_name VARCHAR(100),
-    kades_nip VARCHAR(50)
+    nama_kades VARCHAR(100),
+    nip_kades VARCHAR(50)
 );
 
-CREATE TABLE mail_types (
+CREATE TABLE jenis_surat (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    code VARCHAR(10)
+    nama VARCHAR(100) NOT NULL,
+    kode VARCHAR(10)
 );
 
-CREATE TABLE incoming_mails (
+CREATE TABLE surat_masuk (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    number VARCHAR(50) NOT NULL,
-    date_received DATE NOT NULL,
-    sender VARCHAR(100) NOT NULL,
-    subject VARCHAR(255) NOT NULL,
-    description TEXT,
-    file_path VARCHAR(255),
-    status ENUM('new', 'processed', 'finished') DEFAULT 'new',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    nomor VARCHAR(50) NOT NULL,
+    tanggal_diterima DATE NOT NULL,
+    pengirim VARCHAR(100) NOT NULL,
+    perihal VARCHAR(255) NOT NULL,
+    deskripsi TEXT,
+    path_file VARCHAR(255),
+    status ENUM('baru', 'diproses', 'selesai') DEFAULT 'baru',
+    dibuat_pada TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE outgoing_mails (
+CREATE TABLE surat_keluar (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    number VARCHAR(50) NOT NULL,
-    date_sent DATE NOT NULL,
-    recipient VARCHAR(100) NOT NULL,
-    subject VARCHAR(255) NOT NULL,
-    description TEXT,
-    file_path VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    nomor VARCHAR(50) NOT NULL,
+    tanggal_dikirim DATE NOT NULL,
+    penerima VARCHAR(100) NOT NULL,
+    perihal VARCHAR(255) NOT NULL,
+    deskripsi TEXT,
+    path_file VARCHAR(255),
+    dibuat_pada TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE dispositions (
+CREATE TABLE disposisi (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    mail_id INT,
-    receiver_id INT,
-    instruction TEXT,
-    deadline DATE,
-    notes TEXT,
-    status ENUM('pending', 'completed') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (mail_id) REFERENCES incoming_mails(id) ON DELETE CASCADE,
-    FOREIGN KEY (receiver_id) REFERENCES users(id)
+    surat_masuk_id INT,
+    penerima_id INT,
+    instruksi TEXT,
+    batas_waktu DATE,
+    catatan TEXT,
+    status ENUM('tertunda', 'selesai') DEFAULT 'tertunda',
+    dibuat_pada TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (surat_masuk_id) REFERENCES surat_masuk(id) ON DELETE CASCADE,
+    FOREIGN KEY (penerima_id) REFERENCES pengguna(id)
 );
 
-CREATE TABLE citizen_requests (
+CREATE TABLE pengajuan_warga (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    registration_number VARCHAR(50) NOT NULL UNIQUE,
+    nomor_registrasi VARCHAR(50) NOT NULL UNIQUE,
     nik VARCHAR(20) NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    address TEXT,
-    phone VARCHAR(20),
-    mail_type_id INT,
-    description TEXT,
-    status ENUM('new', 'processed', 'finished', 'rejected') DEFAULT 'new',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (mail_type_id) REFERENCES mail_types(id)
+    nama_lengkap VARCHAR(100) NOT NULL,
+    alamat TEXT,
+    telepon VARCHAR(20),
+    email VARCHAR(100),
+    jenis_surat_id INT,
+    deskripsi TEXT,
+    status ENUM('baru', 'diproses', 'selesai', 'ditolak') DEFAULT 'baru',
+    file_hasil VARCHAR(255),
+    dibuat_pada TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (jenis_surat_id) REFERENCES jenis_surat(id)
 );
 
-CREATE TABLE request_attachments (
+CREATE TABLE lampiran_pengajuan (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    request_id INT,
-    file_path VARCHAR(255),
-    file_type VARCHAR(50),
-    FOREIGN KEY (request_id) REFERENCES citizen_requests(id) ON DELETE CASCADE
+    pengajuan_id INT,
+    path_file VARCHAR(255),
+    tipe_file VARCHAR(50),
+    FOREIGN KEY (pengajuan_id) REFERENCES pengajuan_warga(id) ON DELETE CASCADE
 );
 
-CREATE TABLE activity_logs (
+CREATE TABLE log_aktivitas (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    action VARCHAR(255) NOT NULL,
-    description TEXT,
-    ip_address VARCHAR(45),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    pengguna_id INT,
+    aksi VARCHAR(255) NOT NULL,
+    deskripsi TEXT,
+    alamat_ip VARCHAR(45),
+    dibuat_pada TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (pengguna_id) REFERENCES pengguna(id)
 );
 
 -- Insert default roles
-INSERT INTO roles (name) VALUES ('Admin'), ('Kades'), ('Staf');
+INSERT INTO peran (nama) VALUES ('Admin'), ('Kades'), ('Staf');
+
+-- Insert default letter types (jenis_surat)
+INSERT INTO jenis_surat (nama, kode) VALUES 
+('Surat Keterangan Kematian', 'SKM'),
+('Surat Keterangan Usaha', 'SKU'),
+('Surat Keterangan Domisili', 'SKD'),
+('Surat Keterangan Tidak Mampu', 'SKTM'),
+('Surat Keterangan Belum Menikah', 'SKBM');
 
 -- Insert default admin user (password: admin123)
-INSERT INTO users (username, password, full_name, role_id) VALUES ('admin', '$2y$10$8WkY.fW2mH1uE0r8U3l.O.VvX/0.XmO.e.W0V.W0V.W0V.W0V.W0V', 'Administrator', 1);
+INSERT INTO pengguna (username, password, nama_lengkap, peran_id) VALUES ('admin', '$2y$12$yc6Zd/0MFYKY6dHKCT4sg.bfw9M2g/6XEM.dUjo.qgTI/9qKLPnMS', 'Administrator', 1);
 
 -- Insert default village profile
-INSERT INTO village_profile (name, address, phone, email, kades_name) VALUES ('Desa Pendua', 'Jl. Raya Pendua No. 01, Kayangan, Kabupaten Lombok Utara, NTB 83353', '081234567890', 'kontak@pendua.desa.id', 'Abu Bakar, S.Adm');
+INSERT INTO profil_desa (nama, alamat, telepon, email, nama_kades) VALUES ('Desa Pendua', 'Jl. Raya Pendua No. 01, Kayangan, Kabupaten Lombok Utara, NTB 83353', '081234567890', 'kontak@pendua.desa.id', 'Abu Bakar, S.Adm');

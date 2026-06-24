@@ -9,11 +9,11 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 $search = isset($_GET['search']) ? sanitize($_GET['search']) : '';
 $status = isset($_GET['status']) ? sanitize($_GET['status']) : '';
 
-$query = "SELECT r.*, mt.name as mail_type_name FROM citizen_requests r LEFT JOIN mail_types mt ON r.mail_type_id = mt.id WHERE 1=1";
+$query = "SELECT r.*, mt.nama as mail_type_name FROM pengajuan_warga r LEFT JOIN jenis_surat mt ON r.jenis_surat_id = mt.id WHERE 1=1";
 $params = [];
 
 if ($search) {
-    $query .= " AND (r.full_name LIKE ? OR r.nik LIKE ? OR r.registration_number LIKE ?)";
+    $query .= " AND (r.nama_lengkap LIKE ? OR r.nik LIKE ? OR r.nomor_registrasi LIKE ?)";
     $params = array_merge($params, ["%$search%", "%$search%", "%$search%"]);
 }
 
@@ -22,7 +22,7 @@ if ($status) {
     $params[] = $status;
 }
 
-$query .= " ORDER BY r.created_at DESC";
+$query .= " ORDER BY r.dibuat_pada DESC";
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $requests = $stmt->fetchAll();
@@ -44,10 +44,10 @@ $requests = $stmt->fetchAll();
         <div>
             <select name="status" class="w-full py-2 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm">
                 <option value="">Semua Status</option>
-                <option value="new" <?= $status === 'new' ? 'selected' : '' ?>>Baru</option>
-                <option value="processed" <?= $status === 'processed' ? 'selected' : '' ?>>Diproses</option>
-                <option value="finished" <?= $status === 'finished' ? 'selected' : '' ?>>Selesai</option>
-                <option value="rejected" <?= $status === 'rejected' ? 'selected' : '' ?>>Ditolak</option>
+                <option value="baru" <?= $status === 'baru' ? 'selected' : '' ?>>Baru</option>
+                <option value="diproses" <?= $status === 'diproses' ? 'selected' : '' ?>>Diproses</option>
+                <option value="selesai" <?= $status === 'selesai' ? 'selected' : '' ?>>Selesai</option>
+                <option value="ditolak" <?= $status === 'ditolak' ? 'selected' : '' ?>>Ditolak</option>
             </select>
         </div>
         <button type="submit" class="bg-surface-container-high text-primary font-bold py-2 rounded-xl border border-primary hover:bg-primary hover:text-white transition-all">
@@ -78,20 +78,20 @@ $requests = $stmt->fetchAll();
                 <?php foreach ($requests as $req): ?>
                 <tr class="hover:bg-surface-container-low transition-colors">
                     <td class="px-6 py-4">
-                        <p class="font-bold text-sm text-on-surface"><?= $req['full_name'] ?></p>
-                        <p class="text-xs text-primary font-mono"><?= $req['registration_number'] ?></p>
+                        <p class="font-bold text-sm text-on-surface"><?= $req['nama_lengkap'] ?></p>
+                        <p class="text-xs text-primary font-mono"><?= $req['nomor_registrasi'] ?></p>
                     </td>
                     <td class="px-6 py-4 text-sm"><?= $req['mail_type_name'] ?></td>
-                    <td class="px-6 py-4 text-sm"><?= format_date($req['created_at']) ?></td>
+                    <td class="px-6 py-4 text-sm"><?= format_date($req['dibuat_pada']) ?></td>
                     <td class="px-6 py-4 text-center">
                         <?php
                         $st_classes = [
-                            'new' => 'bg-blue-100 text-blue-700',
-                            'processed' => 'bg-yellow-100 text-yellow-800',
-                            'finished' => 'bg-green-100 text-green-800',
-                            'rejected' => 'bg-red-100 text-red-800'
+                            'baru' => 'bg-blue-100 text-blue-700',
+                            'diproses' => 'bg-yellow-100 text-yellow-800',
+                            'selesai' => 'bg-green-100 text-green-800',
+                            'ditolak' => 'bg-red-100 text-red-800'
                         ];
-                        $st_labels = ['new' => 'Baru', 'processed' => 'Proses', 'finished' => 'Selesai', 'rejected' => 'Ditolak'];
+                        $st_labels = ['baru' => 'Baru', 'diproses' => 'Proses', 'selesai' => 'Selesai', 'ditolak' => 'Ditolak'];
                         ?>
                         <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase <?= $st_classes[$req['status']] ?>">
                             <?= $st_labels[$req['status']] ?>

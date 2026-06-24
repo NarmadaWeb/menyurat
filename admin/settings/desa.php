@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $stmt = $pdo->prepare("UPDATE village_profile SET name = ?, address = ?, phone = ?, email = ?, kades_name = ?, kades_nip = ?, logo = ? WHERE id = 1");
+        $stmt = $pdo->prepare("UPDATE profil_desa SET nama = ?, alamat = ?, telepon = ?, email = ?, nama_kades = ?, nip_kades = ?, logo = ? WHERE id = 1");
         $stmt->execute([$name, $address, $phone, $email, $kades_name, $kades_nip, $logo]);
 
         redirect(base_url('admin/settings/desa.php'), 'Profil desa berhasil diperbarui.');
@@ -55,17 +55,17 @@ require_once __DIR__ . '/../../includes/sidebar.php';
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2">
                     <label for="name" class="block text-sm font-semibold mb-2">Nama Desa</label>
-                    <input type="text" name="name" id="name" required value="<?= $village['name'] ?>"
+                    <input type="text" name="name" id="name" required value="<?= $village['nama'] ?>"
                         class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none">
                 </div>
                 <div class="md:col-span-2">
                     <label for="address" class="block text-sm font-semibold mb-2">Alamat Kantor Desa</label>
                     <textarea name="address" id="address" rows="3" required
-                        class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none"><?= $village['address'] ?></textarea>
+                        class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none"><?= $village['alamat'] ?></textarea>
                 </div>
                 <div>
                     <label for="phone" class="block text-sm font-semibold mb-2">WhatsApp Layanan</label>
-                    <input type="text" name="phone" id="phone" value="<?= $village['phone'] ?>"
+                    <input type="text" name="phone" id="phone" value="<?= $village['telepon'] ?>"
                         class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none">
                 </div>
                 <div>
@@ -85,12 +85,12 @@ require_once __DIR__ . '/../../includes/sidebar.php';
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="kades_name" class="block text-sm font-semibold mb-2">Nama Kepala Desa</label>
-                    <input type="text" name="kades_name" id="kades_name" value="<?= $village['kades_name'] ?>"
+                    <input type="text" name="kades_name" id="kades_name" value="<?= $village['nama_kades'] ?>"
                         class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none">
                 </div>
                 <div>
                     <label for="kades_nip" class="block text-sm font-semibold mb-2">NIP (Jika Ada)</label>
-                    <input type="text" name="kades_nip" id="kades_nip" value="<?= $village['kades_nip'] ?>"
+                    <input type="text" name="kades_nip" id="kades_nip" value="<?= $village['nip_kades'] ?>"
                         class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none">
                 </div>
             </div>

@@ -8,15 +8,15 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
 $search = isset($_GET['search']) ? sanitize($_GET['search']) : '';
 
-$query = "SELECT * FROM outgoing_mails WHERE 1=1";
+$query = "SELECT * FROM surat_keluar WHERE 1=1";
 $params = [];
 
 if ($search) {
-    $query .= " AND (number LIKE ? OR subject LIKE ? OR recipient LIKE ?)";
+    $query .= " AND (nomor LIKE ? OR perihal LIKE ? OR penerima LIKE ?)";
     $params = array_merge($params, ["%$search%", "%$search%", "%$search%"]);
 }
 
-$query .= " ORDER BY date_sent DESC, created_at DESC";
+$query .= " ORDER BY tanggal_dikirim DESC, dibuat_pada DESC";
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $mails = $stmt->fetchAll();
@@ -66,19 +66,19 @@ $mails = $stmt->fetchAll();
                 <?php foreach ($mails as $mail): ?>
                 <tr class="hover:bg-surface-container-low transition-colors">
                     <td class="px-6 py-4">
-                        <p class="font-bold text-primary text-sm"><?= $mail['number'] ?></p>
-                        <p class="text-xs text-on-surface-variant"><?= format_date($mail['date_sent']) ?></p>
+                        <p class="font-bold text-primary text-sm"><?= $mail['nomor'] ?></p>
+                        <p class="text-xs text-on-surface-variant"><?= format_date($mail['tanggal_dikirim']) ?></p>
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
                                 <span class="material-symbols-outlined text-sm">person</span>
                             </div>
-                            <span class="text-sm font-medium"><?= $mail['recipient'] ?></span>
+                            <span class="text-sm font-medium"><?= $mail['penerima'] ?></span>
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <p class="text-sm truncate max-w-xs"><?= $mail['subject'] ?></p>
+                        <p class="text-sm truncate max-w-xs"><?= $mail['perihal'] ?></p>
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center justify-end gap-2">

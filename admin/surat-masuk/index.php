@@ -9,11 +9,11 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 $search = isset($_GET['search']) ? sanitize($_GET['search']) : '';
 $status = isset($_GET['status']) ? sanitize($_GET['status']) : '';
 
-$query = "SELECT * FROM incoming_mails WHERE 1=1";
+$query = "SELECT * FROM surat_masuk WHERE 1=1";
 $params = [];
 
 if ($search) {
-    $query .= " AND (number LIKE ? OR subject LIKE ? OR sender LIKE ?)";
+    $query .= " AND (nomor LIKE ? OR perihal LIKE ? OR pengirim LIKE ?)";
     $params = array_merge($params, ["%$search%", "%$search%", "%$search%"]);
 }
 
@@ -22,7 +22,7 @@ if ($status) {
     $params[] = $status;
 }
 
-$query .= " ORDER BY date_received DESC, created_at DESC";
+$query .= " ORDER BY tanggal_diterima DESC, dibuat_pada DESC";
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $mails = $stmt->fetchAll();
@@ -49,9 +49,9 @@ $mails = $stmt->fetchAll();
         <div>
             <select name="status" class="w-full py-2 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm">
                 <option value="">Semua Status</option>
-                <option value="new" <?= $status === 'new' ? 'selected' : '' ?>>Baru</option>
-                <option value="processed" <?= $status === 'processed' ? 'selected' : '' ?>>Diproses</option>
-                <option value="finished" <?= $status === 'finished' ? 'selected' : '' ?>>Selesai</option>
+                <option value="baru" <?= $status === 'baru' ? 'selected' : '' ?>>Baru</option>
+                <option value="diproses" <?= $status === 'diproses' ? 'selected' : '' ?>>Diproses</option>
+                <option value="selesai" <?= $status === 'selesai' ? 'selected' : '' ?>>Selesai</option>
             </select>
         </div>
         <button type="submit" class="bg-surface-container-high text-primary font-bold py-2 rounded-xl border border-primary hover:bg-primary hover:text-white transition-all">
@@ -81,28 +81,28 @@ $mails = $stmt->fetchAll();
                 <?php foreach ($mails as $mail): ?>
                 <tr class="hover:bg-surface-container-low transition-colors">
                     <td class="px-6 py-4">
-                        <p class="font-bold text-primary text-sm"><?= $mail['number'] ?></p>
-                        <p class="text-xs text-on-surface-variant"><?= format_date($mail['date_received']) ?></p>
+                        <p class="font-bold text-primary text-sm"><?= $mail['nomor'] ?></p>
+                        <p class="text-xs text-on-surface-variant"><?= format_date($mail['tanggal_diterima']) ?></p>
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                                 <span class="material-symbols-outlined text-sm">corporate_fare</span>
                             </div>
-                            <span class="text-sm font-medium"><?= $mail['sender'] ?></span>
+                            <span class="text-sm font-medium"><?= $mail['pengirim'] ?></span>
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <p class="text-sm truncate max-w-xs"><?= $mail['subject'] ?></p>
+                        <p class="text-sm truncate max-w-xs"><?= $mail['perihal'] ?></p>
                     </td>
                     <td class="px-6 py-4 text-center">
                         <?php
                         $status_classes = [
-                            'new' => 'bg-blue-100 text-blue-700',
-                            'processed' => 'bg-yellow-100 text-yellow-800',
-                            'finished' => 'bg-green-100 text-green-800'
+                            'baru' => 'bg-blue-100 text-blue-700',
+                            'diproses' => 'bg-yellow-100 text-yellow-800',
+                            'selesai' => 'bg-green-100 text-green-800'
                         ];
-                        $status_labels = ['new' => 'Baru', 'processed' => 'Proses', 'finished' => 'Selesai'];
+                        $status_labels = ['baru' => 'Baru', 'diproses' => 'Proses', 'selesai' => 'Selesai'];
                         ?>
                         <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase <?= $status_classes[$mail['status']] ?>">
                             <?= $status_labels[$mail['status']] ?>

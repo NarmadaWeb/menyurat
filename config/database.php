@@ -1,8 +1,8 @@
 <?php
 define('DB_HOST', '127.0.0.1');
-define('DB_NAME', 'village_office');
-define('DB_USER', 'admin');
-define('DB_PASS', 'admin123');
+define('DB_NAME', 'menyurat');
+define('DB_USER', 'root');
+define('DB_PASS', 'root');
 
 try {
     $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);

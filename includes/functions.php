@@ -43,7 +43,7 @@ function has_role($role_name) {
 
 function get_village_profile() {
     global $pdo;
-    $stmt = $pdo->query("SELECT * FROM village_profile LIMIT 1");
+    $stmt = $pdo->query("SELECT * FROM profil_desa LIMIT 1");
     return $stmt->fetch();
 }
 

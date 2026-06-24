@@ -7,7 +7,7 @@ $error = null;
 
 if (isset($_GET['code'])) {
     $code = sanitize($_GET['code']);
-    $stmt = $pdo->prepare("SELECT r.*, mt.name as mail_type_name FROM citizen_requests r LEFT JOIN mail_types mt ON r.mail_type_id = mt.id WHERE r.registration_number = ?");
+    $stmt = $pdo->prepare("SELECT r.*, mt.nama as mail_type_name FROM pengajuan_warga r LEFT JOIN jenis_surat mt ON r.jenis_surat_id = mt.id WHERE r.nomor_registrasi = ?");
     $stmt->execute([$code]);
     $request = $stmt->fetch();
 
@@ -39,9 +39,27 @@ if (isset($_GET['code'])) {
 
     <?php if ($request): ?>
         <div class="bg-white rounded-3xl shadow-xl border border-outline-variant p-8">
-            <h2 class="text-2xl font-bold mb-4">Status: <?= $request['status'] ?></h2>
-            <p><strong>Nama:</strong> <?= $request['full_name'] ?></p>
-            <p><strong>Jenis Surat:</strong> <?= $request['mail_type_name'] ?></p>
+            <h2 class="text-2xl font-bold mb-4">Status: <span class="text-primary uppercase"><?= $request['status'] ?></span></h2>
+            <div class="space-y-4 text-on-surface-variant">
+                <p><strong>Nama Pemohon:</strong> <?= $request['nama_lengkap'] ?></p>
+                <p><strong>Jenis Surat:</strong> <?= $request['mail_type_name'] ?></p>
+                
+                <?php if ($request['status'] === 'selesai'): ?>
+                    <div class="mt-6 p-6 bg-green-50 border border-green-200 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div>
+                            <h4 class="font-bold text-green-900 text-lg">Dokumen Selesai Diproses!</h4>
+                            <p class="text-sm text-green-700 mt-1">Silakan unduh dokumen hasil di bawah ini atau ambil langsung di kantor desa.</p>
+                        </div>
+                        <?php if ($request['file_hasil']): ?>
+                            <a href="<?= base_url($request['file_hasil']) ?>" download class="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shrink-0">
+                                <span class="material-symbols-outlined">download</span> Unduh Dokumen
+                            </a>
+                        <?php else: ?>
+                            <span class="text-sm text-green-700 font-semibold italic">Silakan ambil dokumen fisik di kantor desa.</span>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
     <?php endif; ?>
 </div>

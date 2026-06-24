@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_role('Admin');
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+$stmt = $pdo->prepare("SELECT * FROM pengguna WHERE id = ?");
 $stmt->execute([$id]);
 $user = $stmt->fetch();
 
@@ -12,7 +12,7 @@ if (!$user) {
     redirect(base_url('admin/users/index.php'), 'User tidak ditemukan.', 'error');
 }
 
-$roles = $pdo->query("SELECT * FROM roles")->fetchAll();
+$roles = $pdo->query("SELECT * FROM peran")->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = sanitize($_POST['username']);
@@ -24,10 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if (!empty($_POST['password'])) {
             $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("UPDATE users SET username = ?, password = ?, full_name = ?, email = ?, role_id = ?, status = ? WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE pengguna SET username = ?, password = ?, nama_lengkap = ?, email = ?, peran_id = ?, status = ? WHERE id = ?");
             $stmt->execute([$username, $password, $full_name, $email, $role_id, $status, $id]);
         } else {
-            $stmt = $pdo->prepare("UPDATE users SET username = ?, full_name = ?, email = ?, role_id = ?, status = ? WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE pengguna SET username = ?, nama_lengkap = ?, email = ?, peran_id = ?, status = ? WHERE id = ?");
             $stmt->execute([$username, $full_name, $email, $role_id, $status, $id]);
         }
 
@@ -59,7 +59,7 @@ require_once __DIR__ . '/../../includes/sidebar.php';
 
         <div>
             <label for="full_name" class="block text-sm font-semibold mb-2">Nama Lengkap</label>
-            <input type="text" name="full_name" id="full_name" required value="<?= $user['full_name'] ?>"
+            <input type="text" name="full_name" id="full_name" required value="<?= $user['nama_lengkap'] ?>"
                 class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
         </div>
 
@@ -87,15 +87,15 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                 <label for="role_id" class="block text-sm font-semibold mb-2">Role / Hak Akses</label>
                 <select name="role_id" id="role_id" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
                     <?php foreach ($roles as $role): ?>
-                        <option value="<?= $role['id'] ?>" <?= $user['role_id'] == $role['id'] ? 'selected' : '' ?>><?= $role['name'] ?></option>
+                        <option value="<?= $role['id'] ?>" <?= $user['peran_id'] == $role['id'] ? 'selected' : '' ?>><?= $role['nama'] ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div>
                 <label for="status" class="block text-sm font-semibold mb-2">Status Akun</label>
                 <select name="status" id="status" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
-                    <option value="active" <?= $user['status'] === 'active' ? 'selected' : '' ?>>Aktif</option>
-                    <option value="inactive" <?= $user['status'] === 'inactive' ? 'selected' : '' ?>>Nonaktif</option>
+                    <option value="aktif" <?= $user['status'] === 'aktif' ? 'selected' : '' ?>>Aktif</option>
+                    <option value="tidak_aktif" <?= $user['status'] === 'tidak_aktif' ? 'selected' : '' ?>>Nonaktif</option>
                 </select>
             </div>
         </div>

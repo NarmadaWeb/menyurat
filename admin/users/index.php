@@ -6,7 +6,7 @@ require_role('Admin');
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/sidebar.php';
 
-$stmt = $pdo->query("SELECT u.*, r.name as role_name FROM users u JOIN roles r ON u.role_id = r.id ORDER BY u.created_at DESC");
+$stmt = $pdo->query("SELECT u.*, r.nama as role_name FROM pengguna u JOIN peran r ON u.peran_id = r.id ORDER BY u.dibuat_pada DESC");
 $users = $stmt->fetchAll();
 ?>
 
@@ -39,10 +39,10 @@ $users = $stmt->fetchAll();
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                                <?= strtoupper(substr($user['full_name'], 0, 1)) ?>
+                                <?= strtoupper(substr($user['nama_lengkap'], 0, 1)) ?>
                             </div>
                             <div>
-                                <p class="font-bold text-sm"><?= $user['full_name'] ?></p>
+                                <p class="font-bold text-sm"><?= $user['nama_lengkap'] ?></p>
                                 <p class="text-xs text-on-surface-variant"><?= $user['email'] ?: '-' ?></p>
                             </div>
                         </div>
@@ -54,8 +54,8 @@ $users = $stmt->fetchAll();
                         </span>
                     </td>
                     <td class="px-6 py-4 text-center">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase <?= $user['status'] === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
-                            <?= $user['status'] === 'active' ? 'Aktif' : 'Nonaktif' ?>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase <?= $user['status'] === 'aktif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
+                            <?= $user['status'] === 'aktif' ? 'Aktif' : 'Nonaktif' ?>
                         </span>
                     </td>
                     <td class="px-6 py-4">

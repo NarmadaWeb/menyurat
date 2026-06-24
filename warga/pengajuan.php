@@ -2,13 +2,14 @@
 $page_title = "Pengajuan Surat Online";
 require_once __DIR__ . '/../includes/header.php';
 
-$mail_types = $pdo->query("SELECT * FROM mail_types ORDER BY name ASC")->fetchAll();
+$mail_types = $pdo->query("SELECT * FROM jenis_surat ORDER BY nama ASC")->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nik = sanitize($_POST['nik']);
     $full_name = sanitize($_POST['full_name']);
     $address = sanitize($_POST['address']);
     $phone = sanitize($_POST['phone']);
+    $email = sanitize($_POST['email']);
     $mail_type_id = (int)$_POST['mail_type_id'];
     $description = sanitize($_POST['description']);
     $reg_number = generate_registration_number();
@@ -16,8 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $pdo->beginTransaction();
 
-        $stmt = $pdo->prepare("INSERT INTO citizen_requests (registration_number, nik, full_name, address, phone, mail_type_id, description) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$reg_number, $nik, $full_name, $address, $phone, $mail_type_id, $description]);
+        $stmt = $pdo->prepare("INSERT INTO pengajuan_warga (nomor_registrasi, nik, nama_lengkap, alamat, telepon, email, jenis_surat_id, deskripsi) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$reg_number, $nik, $full_name, $address, $phone, $email, $mail_type_id, $description]);
         $request_id = $pdo->lastInsertId();
 
         if (isset($_FILES['attachments'])) {
@@ -28,8 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($_FILES['attachments']['error'][$key] === UPLOAD_ERR_OK) {
                     $filename = time() . '_' . $key . '_' . basename($_FILES['attachments']['name'][$key]);
                     if (move_uploaded_file($tmp_name, $upload_dir . $filename)) {
-                        $stmt_att = $pdo->prepare("INSERT INTO request_attachments (request_id, file_path) VALUES (?, ?)");
-                        $stmt_att->execute([$request_id, 'uploads/requests/' . $filename]);
+                        $tipe_file = sanitize($_POST['attachment_labels'][$key] ?? 'Lampiran');
+                        $stmt_att = $pdo->prepare("INSERT INTO lampiran_pengajuan (pengajuan_id, path_file, tipe_file) VALUES (?, ?, ?)");
+                        $stmt_att->execute([$request_id, 'uploads/requests/' . $filename, $tipe_file]);
                     }
                 }
             }
@@ -89,6 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label for="phone" class="block text-sm font-semibold">Nomor WhatsApp</label>
                         <input type="tel" id="phone" name="phone" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="08xxxxxxxxxx">
                     </div>
+                    <div class="space-y-2">
+                        <label for="email" class="block text-sm font-semibold">Email Aktif</label>
+                        <input type="email" id="email" name="email" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="warga@email.com">
+                    </div>
                 </div>
             </section>
 
@@ -102,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <select id="mail_type_id" name="mail_type_id" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none">
                             <option value="">-- Pilih Jenis Surat --</option>
                             <?php foreach ($mail_types as $type): ?>
-                                <option value="<?= $type['id'] ?>"><?= $type['name'] ?></option>
+                                <option value="<?= $type['id'] ?>" data-code="<?= $type['kode'] ?>"><?= $type['nama'] ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -115,17 +121,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <section class="bg-white rounded-2xl p-8 shadow-sm border border-outline-variant">
                 <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">upload_file</span> Unggah Lampiran
+                    <span class="material-symbols-outlined text-primary">upload_file</span> Unggah Lampiran Persyaratan
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="attachment-container">
-                    <div class="border-2 border-dashed border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center gap-2 hover:border-primary cursor-pointer" onclick="this.querySelector('input').click()">
-                        <span class="material-symbols-outlined text-3xl text-on-surface-variant">add_a_photo</span>
-                        <p class="text-xs font-bold text-on-surface-variant">Pilih File</p>
-                        <input type="file" name="attachments[]" class="hidden" onchange="showFileName(this)">
-                    </div>
+                <div class="bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-4 mb-6 text-sm flex items-start gap-2" id="req-notice">
+                    <span class="material-symbols-outlined text-amber-700 shrink-0">info</span>
+                    <span>Pilih jenis surat terlebih dahulu untuk melihat daftar dokumen persyaratan yang harus diunggah.</span>
                 </div>
-                <button type="button" onclick="addAttachmentField()" class="mt-4 text-primary font-bold text-sm flex items-center gap-1 hover:underline">
-                    <span class="material-symbols-outlined text-lg">add_circle</span> Tambah Lampiran
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="attachment-container">
+                    <!-- Dynamic slots generated here -->
+                </div>
+                <button type="button" onclick="addAttachmentField()" class="mt-4 text-primary font-bold text-sm flex items-center gap-1 hover:underline hidden" id="btn-add-attachment">
+                    <span class="material-symbols-outlined text-lg">add_circle</span> Tambah Lampiran Tambahan
                 </button>
             </section>
 
@@ -137,26 +143,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <script>
-function showFileName(input) {
+const requirements = {
+    'SKM': ['KTP Almarhum', 'Kartu Keluarga (KK)', 'Surat Keterangan Kematian dari RS/RT'],
+    'SKU': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Foto Tempat Usaha / Pengantar'],
+    'SKD': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Surat Pengantar RT/RW'],
+    'SKTM': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Surat Pengantar / Bukti Foto Rumah'],
+    'SKBM': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Surat Pernyataan Belum Menikah']
+};
+
+document.getElementById('mail_type_id').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const code = selectedOption.getAttribute('data-code');
+    const container = document.getElementById('attachment-container');
+    const notice = document.getElementById('req-notice');
+    const btnAdd = document.getElementById('btn-add-attachment');
+    
+    container.innerHTML = '';
+    
+    if (!code) {
+        notice.classList.remove('hidden');
+        btnAdd.classList.add('hidden');
+        return;
+    }
+    
+    notice.classList.add('hidden');
+    btnAdd.classList.remove('hidden');
+    
+    const docs = requirements[code] || ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Dokumen Pendukung'];
+    
+    docs.forEach((doc) => {
+        createAttachmentSlot(doc, true);
+    });
+});
+
+function createAttachmentSlot(label, required = false) {
+    const container = document.getElementById('attachment-container');
+    const div = document.createElement('div');
+    div.className = "border-2 border-dashed border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center gap-2 hover:border-primary cursor-pointer bg-surface-container-low transition-all relative";
+    div.onclick = function() { this.querySelector('input').click(); };
+    div.innerHTML = `
+        <span class="material-symbols-outlined text-3xl text-primary">upload_file</span>
+        <p class="text-sm font-bold text-on-surface text-center">${label} ${required ? '<span class="text-error">*</span>' : ''}</p>
+        <p class="text-xs text-on-surface-variant text-center file-name">Belum ada file terpilih</p>
+        <input type="file" name="attachments[]" ${required ? 'required' : ''} class="hidden" onchange="updateFileLabel(this)">
+        <input type="hidden" name="attachment_labels[]" value="${label}">
+    `;
+    container.appendChild(div);
+}
+
+function updateFileLabel(input) {
     if (input.files.length > 0) {
-        const p = input.parentElement.querySelector('p');
+        const p = input.parentElement.querySelector('.file-name');
         p.textContent = input.files[0].name;
+        p.classList.replace('text-on-surface-variant', 'text-primary');
         input.parentElement.classList.replace('border-outline-variant', 'border-primary');
         input.parentElement.classList.add('bg-primary/5');
     }
 }
 
 function addAttachmentField() {
-    const container = document.getElementById('attachment-container');
-    const div = document.createElement('div');
-    div.className = "border-2 border-dashed border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center gap-2 hover:border-primary cursor-pointer";
-    div.onclick = function() { this.querySelector('input').click(); };
-    div.innerHTML = `
-        <span class="material-symbols-outlined text-3xl text-on-surface-variant">add_a_photo</span>
-        <p class="text-xs font-bold text-on-surface-variant">Pilih File</p>
-        <input type="file" name="attachments[]" class="hidden" onchange="showFileName(this)">
-    `;
-    container.appendChild(div);
+    createAttachmentSlot('Lampiran Tambahan', false);
 }
 </script>
 

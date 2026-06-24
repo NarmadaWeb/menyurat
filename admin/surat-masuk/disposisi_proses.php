@@ -16,12 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $pdo->beginTransaction();
-        $stmt = $pdo->prepare("INSERT INTO dispositions (mail_id, receiver_id, instruction, deadline, notes) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO disposisi (surat_masuk_id, penerima_id, instruksi, batas_waktu, catatan) VALUES (?, ?, ?, ?, ?)");
         foreach ($receiver_ids as $receiver_id) {
             $stmt->execute([$mail_id, $receiver_id, $instruction, $deadline, $notes]);
         }
-        $pdo->prepare("UPDATE incoming_mails SET status = ? WHERE id = ?")->execute([$status_update, $mail_id]);
-        $pdo->prepare("INSERT INTO activity_logs (user_id, action, description) VALUES (?, 'mengirim disposisi', ?)")->execute([$_SESSION['user_id'], "Surat ID: $mail_id"]);
+        $pdo->prepare("UPDATE surat_masuk SET status = ? WHERE id = ?")->execute([$status_update, $mail_id]);
+        $pdo->prepare("INSERT INTO log_aktivitas (pengguna_id, aksi, deskripsi) VALUES (?, 'mengirim disposisi', ?)")->execute([$_SESSION['user_id'], "Surat ID: $mail_id"]);
         $pdo->commit();
         redirect(base_url('admin/surat-masuk/detail.php?id=' . $mail_id), 'Disposisi berhasil dikirim.');
     } catch (PDOException $e) {

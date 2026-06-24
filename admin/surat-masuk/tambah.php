@@ -3,7 +3,7 @@ $page_title = "Tambah Surat Masuk";
 require_once __DIR__ . '/../../includes/auth.php';
 require_login();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $stmt = $pdo->prepare("INSERT INTO incoming_mails (number, date_received, sender, subject, description) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO surat_masuk (nomor, tanggal_diterima, pengirim, perihal, deskripsi) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([$_POST['number'], $_POST['date_received'], $_POST['sender'], $_POST['subject'], $_POST['description']]);
     redirect(base_url('admin/surat-masuk/index.php'), 'Berhasil.');
 }

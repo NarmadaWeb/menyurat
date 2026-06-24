@@ -4,7 +4,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_login();
 
 $user_id = $_SESSION['user_id'];
-$stmt = $pdo->prepare("SELECT u.*, r.name as role_name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?");
+$stmt = $pdo->prepare("SELECT u.*, r.nama as role_name FROM pengguna u JOIN peran r ON u.peran_id = r.id WHERE u.id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $full_name = sanitize($_POST['full_name']);
         $email = sanitize($_POST['email']);
 
-        $stmt = $pdo->prepare("UPDATE users SET full_name = ?, email = ? WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE pengguna SET nama_lengkap = ?, email = ? WHERE id = ?");
         $stmt->execute([$full_name, $email, $user_id]);
         $_SESSION['full_name'] = $full_name;
         redirect(base_url('admin/profil.php'), 'Profil berhasil diperbarui.');
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($old_pass, $user['password'])) {
             if ($new_pass === $confirm_pass) {
                 $hashed = password_hash($new_pass, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+                $stmt = $pdo->prepare("UPDATE pengguna SET password = ? WHERE id = ?");
                 $stmt->execute([$hashed, $user_id]);
                 redirect(base_url('admin/profil.php'), 'Password berhasil diubah.');
             } else {
@@ -58,7 +58,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
             <div>
                 <label for="full_name" class="block text-sm font-semibold mb-2">Nama Lengkap</label>
-                <input type="text" name="full_name" id="full_name" value="<?= $user['full_name'] ?>" required class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                <input type="text" name="full_name" id="full_name" value="<?= $user['nama_lengkap'] ?>" required class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary outline-none">
             </div>
             <div>
                 <label for="email" class="block text-sm font-semibold mb-2">Email</label>

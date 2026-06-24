@@ -3,7 +3,7 @@ $page_title = "Tambah Pengguna";
 require_once __DIR__ . '/../../includes/auth.php';
 require_role('Admin');
 
-$roles = $pdo->query("SELECT * FROM roles")->fetchAll();
+$roles = $pdo->query("SELECT * FROM peran")->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = sanitize($_POST['username']);
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = sanitize($_POST['status']);
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO users (username, password, full_name, email, role_id, status) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO pengguna (username, password, nama_lengkap, email, peran_id, status) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->execute([$username, $password, $full_name, $email, $role_id, $status]);
 
         redirect(base_url('admin/users/index.php'), 'User baru berhasil ditambahkan.');
@@ -73,15 +73,15 @@ require_once __DIR__ . '/../../includes/sidebar.php';
                 <label for="role_id" class="block text-sm font-semibold mb-2">Role / Hak Akses</label>
                 <select name="role_id" id="role_id" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
                     <?php foreach ($roles as $role): ?>
-                        <option value="<?= $role['id'] ?>"><?= $role['name'] ?></option>
+                        <option value="<?= $role['id'] ?>"><?= $role['nama'] ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div>
                 <label for="status" class="block text-sm font-semibold mb-2">Status Akun</label>
                 <select name="status" id="status" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
-                    <option value="active">Aktif</option>
-                    <option value="inactive">Nonaktif</option>
+                    <option value="aktif">Aktif</option>
+                    <option value="tidak_aktif">Nonaktif</option>
                 </select>
             </div>
         </div>
