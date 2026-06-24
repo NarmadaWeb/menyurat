@@ -148,7 +148,12 @@ const requirements = {
     'SKU': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Foto Tempat Usaha / Pengantar'],
     'SKD': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Surat Pengantar RT/RW'],
     'SKTM': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Surat Pengantar / Bukti Foto Rumah'],
-    'SKBM': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Surat Pernyataan Belum Menikah']
+    'SKBM': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Surat Pernyataan Belum Menikah'],
+    'SKCK': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Akta Kelahiran', 'Surat Pengantar RT/RW'],
+    'SKIK': ['KTP Penanggung Jawab', 'Kartu Keluarga (KK)', 'Surat Pengantar RT/RW', 'Rundown / Proposal Acara'],
+    'SKP': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Pas Foto 3x4', 'Surat Pengantar RT/RW'],
+    'SKKB': ['KTP Pemohon', 'Kartu Keluarga (KK)', 'Surat Pengantar RT/RW'],
+    'SKDL': ['KTP Pimpinan Lembaga', 'Akta Pendirian / SK Kemenkumham', 'Surat Pengantar RT/RW']
 };
 
 document.getElementById('mail_type_id').addEventListener('change', function() {

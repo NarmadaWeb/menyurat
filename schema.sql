@@ -115,7 +115,12 @@ INSERT INTO jenis_surat (nama, kode) VALUES
 ('Surat Keterangan Usaha', 'SKU'),
 ('Surat Keterangan Domisili', 'SKD'),
 ('Surat Keterangan Tidak Mampu', 'SKTM'),
-('Surat Keterangan Belum Menikah', 'SKBM');
+('Surat Keterangan Belum Menikah', 'SKBM'),
+('Surat Pengantar SKCK', 'SKCK'),
+('Surat Izin Keramaian', 'SKIK'),
+('Surat Keterangan Pindah', 'SKP'),
+('Surat Keterangan Kelakuan Baik', 'SKKB'),
+('Surat Domisili Lembaga', 'SKDL');
 
 -- Insert default admin user (password: admin123)
 INSERT INTO pengguna (username, password, nama_lengkap, peran_id) VALUES ('admin', '$2y$12$yc6Zd/0MFYKY6dHKCT4sg.bfw9M2g/6XEM.dUjo.qgTI/9qKLPnMS', 'Administrator', 1);
