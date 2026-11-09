@@ -46,97 +46,108 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<div class="max-w-4xl mx-auto py-12 px-6">
+<div class="max-w-4xl mx-auto py-8 sm:py-12 px-4 sm:px-6">
     <?php if (isset($success_msg)): ?>
-        <div class="bg-white rounded-3xl p-12 shadow-xl border border-outline-variant text-center">
-            <div class="w-24 h-24 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg shadow-primary/20">
-                <span class="material-symbols-outlined text-6xl">verified</span>
+        <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-outline-variant text-center max-w-2xl mx-auto">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 bg-primary text-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/20">
+                <span class="material-symbols-outlined text-4xl sm:text-6xl">verified</span>
             </div>
-            <h2 class="text-3xl font-bold mb-4">Pengajuan Berhasil!</h2>
-            <p class="text-on-surface-variant text-lg mb-8">Nomor registrasi Anda adalah:</p>
-            <div class="bg-surface-container-low py-4 px-8 rounded-2xl inline-block mb-8">
-                <span class="text-3xl font-mono font-bold text-primary"><?= $success_msg ?></span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold mb-3 text-on-surface">Pengajuan Berhasil Terkirim!</h2>
+            <p class="text-on-surface-variant text-sm sm:text-base mb-6">Berkas Anda telah diterima sistem dan akan segera diverifikasi oleh petugas desa.</p>
+            <div class="bg-surface-container-low py-4 px-6 sm:px-8 rounded-2xl inline-block mb-6 border border-outline-variant">
+                <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider mb-1">Nomor Registrasi Anda</p>
+                <span class="text-2xl sm:text-3xl font-mono font-extrabold text-primary select-all"><?= $success_msg ?></span>
             </div>
-            <p class="text-on-surface-variant mb-12">Harap simpan nomor ini untuk melakukan pengecekan status secara berkala di halaman <b>Cek Status</b>.</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="<?= base_url('warga/pengajuan.php') ?>" class="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:bg-primary-container transition-all">Ajukan Lagi</a>
-                <a href="<?= base_url() ?>" class="border border-outline-variant px-8 py-3 rounded-xl font-bold hover:bg-surface-container-low transition-all">Kembali ke Beranda</a>
+            <p class="text-xs sm:text-sm text-on-surface-variant mb-8 max-w-md mx-auto">Simpan nomor registrasi di atas untuk memeriksa status penerbitan dokumen pada menu Cek Status.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="<?= base_url('warga/status.php?code=' . urlencode($success_msg)) ?>" class="bg-primary hover:bg-primary-container text-white px-6 py-3 rounded-xl font-bold transition-all shadow-md text-sm">
+                    Lihat Status Sekarang
+                </a>
+                <a href="<?= base_url() ?>" class="border border-outline-variant px-6 py-3 rounded-xl font-bold hover:bg-surface-container-low transition-all text-sm">
+                    Kembali ke Beranda
+                </a>
             </div>
         </div>
     <?php else: ?>
-        <div class="mb-12">
-            <h1 class="text-4xl font-bold text-on-surface mb-4">Pengajuan Surat Online</h1>
-            <p class="text-on-surface-variant text-lg">Silakan lengkapi formulir di bawah ini untuk memproses dokumen administrasi Anda secara digital.</p>
+        <div class="mb-8 sm:mb-10 text-center sm:text-left">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-on-surface mb-2">Formulir Pengajuan Surat</h1>
+            <p class="text-on-surface-variant text-sm sm:text-base">Lengkapi data diri dan lampiran persyaratan dokumen sesuai ketentuan pelayanan.</p>
         </div>
 
-        <form action="" method="POST" enctype="multipart/form-data" class="space-y-8">
-            <section class="bg-white rounded-2xl p-8 shadow-sm border border-outline-variant">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">person</span> Identitas Pemohon
+        <?php if (isset($error)): ?>
+            <div class="mb-6 p-4 rounded-xl bg-red-100 text-red-800 text-sm font-semibold">
+                <?= $error ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="" method="POST" enctype="multipart/form-data" class="space-y-6 sm:space-y-8">
+            <section class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant">
+                <h2 class="text-lg sm:text-xl font-bold mb-6 flex items-center gap-2 text-primary pb-3 border-b border-outline-variant">
+                    <span class="material-symbols-outlined">person</span> 1. Identitas Pemohon
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label for="nik" class="block text-sm font-semibold">NIK (Sesuai KTP)</label>
-                        <input type="text" id="nik" name="nik" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div class="space-y-1.5">
+                        <label for="nik" class="block text-xs font-bold uppercase text-on-surface-variant">NIK (Sesuai KTP) <span class="text-error">*</span></label>
+                        <input type="text" id="nik" name="nik" required maxlength="16" placeholder="16 digit NIK" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm font-mono transition-all">
                     </div>
-                    <div class="space-y-2">
-                        <label for="full_name" class="block text-sm font-semibold">Nama Lengkap</label>
-                        <input type="text" id="full_name" name="full_name" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                    <div class="space-y-1.5">
+                        <label for="full_name" class="block text-xs font-bold uppercase text-on-surface-variant">Nama Lengkap <span class="text-error">*</span></label>
+                        <input type="text" id="full_name" name="full_name" required placeholder="Nama lengkap sesuai KTP" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm transition-all">
                     </div>
-                    <div class="md:col-span-2 space-y-2">
-                        <label for="address" class="block text-sm font-semibold">Alamat Lengkap</label>
-                        <textarea id="address" name="address" required rows="3" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none"></textarea>
+                    <div class="sm:col-span-2 space-y-1.5">
+                        <label for="address" class="block text-xs font-bold uppercase text-on-surface-variant">Alamat Tempat Tinggal <span class="text-error">*</span></label>
+                        <textarea id="address" name="address" required rows="2" placeholder="Nama dusun, RT/RW, Desa Pendua" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm transition-all"></textarea>
                     </div>
-                    <div class="space-y-2">
-                        <label for="phone" class="block text-sm font-semibold">Nomor WhatsApp</label>
-                        <input type="tel" id="phone" name="phone" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="08xxxxxxxxxx">
+                    <div class="space-y-1.5">
+                        <label for="phone" class="block text-xs font-bold uppercase text-on-surface-variant">Nomor WhatsApp Aktif <span class="text-error">*</span></label>
+                        <input type="tel" id="phone" name="phone" required placeholder="08xxxxxxxxxx" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm transition-all">
                     </div>
-                    <div class="space-y-2">
-                        <label for="email" class="block text-sm font-semibold">Email Aktif</label>
-                        <input type="email" id="email" name="email" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="warga@email.com">
+                    <div class="space-y-1.5">
+                        <label for="email" class="block text-xs font-bold uppercase text-on-surface-variant">Email</label>
+                        <input type="email" id="email" name="email" placeholder="nama@email.com (opsional)" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm transition-all">
                     </div>
                 </div>
             </section>
 
-            <section class="bg-white rounded-2xl p-8 shadow-sm border border-outline-variant">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">description</span> Detail Pengajuan
+            <section class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant">
+                <h2 class="text-lg sm:text-xl font-bold mb-6 flex items-center gap-2 text-primary pb-3 border-b border-outline-variant">
+                    <span class="material-symbols-outlined">description</span> 2. Rincian Surat yang Dibutuhkan
                 </h2>
-                <div class="space-y-6">
-                    <div class="space-y-2">
-                        <label for="mail_type_id" class="block text-sm font-semibold">Jenis Surat</label>
-                        <select id="mail_type_id" name="mail_type_id" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none">
-                            <option value="">-- Pilih Jenis Surat --</option>
+                <div class="space-y-5">
+                    <div class="space-y-1.5">
+                        <label for="mail_type_id" class="block text-xs font-bold uppercase text-on-surface-variant">Pilih Jenis Surat <span class="text-error">*</span></label>
+                        <select id="mail_type_id" name="mail_type_id" required class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-white transition-all">
+                            <option value="">-- Pilih Jenis Layanan Surat --</option>
                             <?php foreach ($mail_types as $type): ?>
-                                <option value="<?= $type['id'] ?>" data-code="<?= $type['kode'] ?>"><?= $type['nama'] ?></option>
+                                <option value="<?= $type['id'] ?>" data-code="<?= $type['kode'] ?>"><?= htmlspecialchars($type['nama']) ?> (<?= $type['kode'] ?>)</option>
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="space-y-2">
-                        <label for="description" class="block text-sm font-semibold">Keperluan / Keterangan</label>
-                        <textarea id="description" name="description" required rows="4" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="Jelaskan alasan pengajuan Anda..."></textarea>
+                    <div class="space-y-1.5">
+                        <label for="description" class="block text-xs font-bold uppercase text-on-surface-variant">Keperluan / Alasan Pembuatan <span class="text-error">*</span></label>
+                        <textarea id="description" name="description" required rows="3" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm transition-all" placeholder="Jelaskan untuk keperluan apa surat ini diajukan..."></textarea>
                     </div>
                 </div>
             </section>
 
-            <section class="bg-white rounded-2xl p-8 shadow-sm border border-outline-variant">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">upload_file</span> Unggah Lampiran Persyaratan
+            <section class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant">
+                <h2 class="text-lg sm:text-xl font-bold mb-4 flex items-center gap-2 text-primary pb-3 border-b border-outline-variant">
+                    <span class="material-symbols-outlined">upload_file</span> 3. Dokumen Lampiran Persyaratan
                 </h2>
-                <div class="bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-4 mb-6 text-sm flex items-start gap-2" id="req-notice">
-                    <span class="material-symbols-outlined text-amber-700 shrink-0">info</span>
-                    <span>Pilih jenis surat terlebih dahulu untuk melihat daftar dokumen persyaratan yang harus diunggah.</span>
+                <div class="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-4 mb-6 text-xs sm:text-sm flex items-start gap-3" id="req-notice">
+                    <span class="material-symbols-outlined text-amber-700 shrink-0 text-xl">info</span>
+                    <span>Pilih jenis surat di atas terlebih dahulu untuk memunculkan dokumen persyaratan yang harus diunggah (Format gambar/PDF).</span>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="attachment-container">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="attachment-container">
                     <!-- Dynamic slots generated here -->
                 </div>
-                <button type="button" onclick="addAttachmentField()" class="mt-4 text-primary font-bold text-sm flex items-center gap-1 hover:underline hidden" id="btn-add-attachment">
-                    <span class="material-symbols-outlined text-lg">add_circle</span> Tambah Lampiran Tambahan
+                <button type="button" onclick="addAttachmentField()" class="mt-4 text-primary font-bold text-xs sm:text-sm flex items-center gap-1 hover:underline hidden" id="btn-add-attachment">
+                    <span class="material-symbols-outlined text-base">add_circle</span> Tambah Lampiran Tambahan
                 </button>
             </section>
 
-            <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-bold text-xl hover:bg-primary-container transition-all shadow-lg flex items-center justify-center gap-3">
-                <span class="material-symbols-outlined">send</span> Kirim Pengajuan
+            <button type="submit" class="w-full bg-primary hover:bg-primary-container text-white py-4 rounded-2xl font-bold text-base sm:text-lg transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2 active:scale-[0.99]">
+                <span class="material-symbols-outlined text-xl">send</span> Kirim Permohonan Surat
             </button>
         </form>
     <?php endif; ?>
@@ -156,13 +167,14 @@ const requirements = {
     'SKDL': ['KTP Pimpinan Lembaga', 'Akta Pendirian / SK Kemenkumham', 'Surat Pengantar RT/RW']
 };
 
-document.getElementById('mail_type_id').addEventListener('change', function() {
+document.getElementById('mail_type_id')?.addEventListener('change', function() {
     const selectedOption = this.options[this.selectedIndex];
     const code = selectedOption.getAttribute('data-code');
     const container = document.getElementById('attachment-container');
     const notice = document.getElementById('req-notice');
     const btnAdd = document.getElementById('btn-add-attachment');
     
+    if (!container) return;
     container.innerHTML = '';
     
     if (!code) {
@@ -184,12 +196,12 @@ document.getElementById('mail_type_id').addEventListener('change', function() {
 function createAttachmentSlot(label, required = false) {
     const container = document.getElementById('attachment-container');
     const div = document.createElement('div');
-    div.className = "border-2 border-dashed border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center gap-2 hover:border-primary cursor-pointer bg-surface-container-low transition-all relative";
+    div.className = "border-2 border-dashed border-outline-variant rounded-2xl p-5 flex flex-col items-center justify-center gap-2 hover:border-primary cursor-pointer bg-surface-container-low transition-all relative text-center";
     div.onclick = function() { this.querySelector('input').click(); };
     div.innerHTML = `
         <span class="material-symbols-outlined text-3xl text-primary">upload_file</span>
-        <p class="text-sm font-bold text-on-surface text-center">${label} ${required ? '<span class="text-error">*</span>' : ''}</p>
-        <p class="text-xs text-on-surface-variant text-center file-name">Belum ada file terpilih</p>
+        <p class="text-xs sm:text-sm font-bold text-on-surface">${label} ${required ? '<span class="text-error">*</span>' : ''}</p>
+        <p class="text-[11px] text-on-surface-variant file-name truncate max-w-full">Pilih file (JPG, PNG, PDF)</p>
         <input type="file" name="attachments[]" ${required ? 'required' : ''} class="hidden" onchange="updateFileLabel(this)">
         <input type="hidden" name="attachment_labels[]" value="${label}">
     `;
@@ -201,6 +213,7 @@ function updateFileLabel(input) {
         const p = input.parentElement.querySelector('.file-name');
         p.textContent = input.files[0].name;
         p.classList.replace('text-on-surface-variant', 'text-primary');
+        p.classList.add('font-semibold');
         input.parentElement.classList.replace('border-outline-variant', 'border-primary');
         input.parentElement.classList.add('bg-primary/5');
     }

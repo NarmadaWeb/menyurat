@@ -8,6 +8,7 @@ $total_surat_masuk = $pdo->query("SELECT COUNT(*) FROM surat_masuk")->fetchColum
 $total_surat_keluar = $pdo->query("SELECT COUNT(*) FROM surat_keluar")->fetchColumn();
 $total_pengajuan = $pdo->query("SELECT COUNT(*) FROM pengajuan_warga")->fetchColumn();
 $total_pengajuan_baru = $pdo->query("SELECT COUNT(*) FROM pengajuan_warga WHERE status = 'baru'")->fetchColumn();
+$total_penduduk = $pdo->query("SELECT COUNT(*) FROM penduduk")->fetchColumn();
 
 // Fetch recent 5 citizen requests
 $recent_requests = $pdo->query("SELECT r.*, mt.nama as mail_type_name FROM pengajuan_warga r LEFT JOIN jenis_surat mt ON r.jenis_surat_id = mt.id ORDER BY r.dibuat_pada DESC LIMIT 5")->fetchAll();
@@ -20,48 +21,59 @@ require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
 <!-- Statistics Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
     <!-- Card 1 -->
-    <div class="bg-white p-6 rounded-2xl border border-outline-variant shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+    <div class="bg-white p-5 rounded-2xl border border-outline-variant shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
+        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
             <span class="material-symbols-outlined text-2xl">mail</span>
         </div>
-        <div>
-            <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider">Surat Masuk</p>
-            <h3 class="text-2xl font-bold text-on-surface mt-1"><?= $total_surat_masuk ?></h3>
+        <div class="overflow-hidden">
+            <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider truncate">Surat Masuk</p>
+            <h3 class="text-2xl font-bold text-on-surface mt-0.5"><?= $total_surat_masuk ?></h3>
         </div>
     </div>
     
     <!-- Card 2 -->
-    <div class="bg-white p-6 rounded-2xl border border-outline-variant shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+    <div class="bg-white p-5 rounded-2xl border border-outline-variant shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
+        <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
             <span class="material-symbols-outlined text-2xl">send</span>
         </div>
-        <div>
-            <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider">Surat Keluar</p>
-            <h3 class="text-2xl font-bold text-on-surface mt-1"><?= $total_surat_keluar ?></h3>
+        <div class="overflow-hidden">
+            <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider truncate">Surat Keluar</p>
+            <h3 class="text-2xl font-bold text-on-surface mt-0.5"><?= $total_surat_keluar ?></h3>
         </div>
     </div>
 
     <!-- Card 3 -->
-    <div class="bg-white p-6 rounded-2xl border border-outline-variant shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-700">
+    <div class="bg-white p-5 rounded-2xl border border-outline-variant shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700 shrink-0">
             <span class="material-symbols-outlined text-2xl">groups</span>
         </div>
-        <div>
-            <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider">Pengajuan Warga</p>
-            <h3 class="text-2xl font-bold text-on-surface mt-1"><?= $total_pengajuan ?></h3>
+        <div class="overflow-hidden">
+            <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider truncate">Data Penduduk</p>
+            <h3 class="text-2xl font-bold text-on-surface mt-0.5"><?= $total_penduduk ?></h3>
         </div>
     </div>
 
     <!-- Card 4 -->
-    <div class="bg-white p-6 rounded-2xl border border-outline-variant shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-700">
+    <div class="bg-white p-5 rounded-2xl border border-outline-variant shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
+        <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-700 shrink-0">
+            <span class="material-symbols-outlined text-2xl">inbox</span>
+        </div>
+        <div class="overflow-hidden">
+            <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider truncate">Pengajuan Warga</p>
+            <h3 class="text-2xl font-bold text-on-surface mt-0.5"><?= $total_pengajuan ?></h3>
+        </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="bg-white p-5 rounded-2xl border border-outline-variant shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
+        <div class="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-yellow-700 shrink-0">
             <span class="material-symbols-outlined text-2xl">pending_actions</span>
         </div>
-        <div>
-            <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider">Pengajuan Pending</p>
-            <h3 class="text-2xl font-bold text-orange-700 mt-1"><?= $total_pengajuan_baru ?></h3>
+        <div class="overflow-hidden">
+            <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider truncate">Pengajuan Baru</p>
+            <h3 class="text-2xl font-bold text-on-surface mt-0.5"><?= $total_pengajuan_baru ?></h3>
         </div>
     </div>
 </div>

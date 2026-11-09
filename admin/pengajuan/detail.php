@@ -9,7 +9,12 @@ require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/sidebar.php';
 ?>
 <div class="bg-white p-8 rounded-2xl border border-outline-variant shadow-sm max-w-2xl">
-    <h2 class="text-2xl font-bold mb-4">Pengajuan: <?= $request['nama_lengkap'] ?></h2>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+        <h2 class="text-2xl font-bold">Pengajuan: <?= $request['nama_lengkap'] ?></h2>
+        <a href="<?= base_url('admin/surat/buat.php?pengajuan_id=' . $request['id']) ?>" target="_blank" class="bg-primary hover:bg-primary-container text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center justify-center gap-1.5 shrink-0">
+            <span class="material-symbols-outlined text-base">print</span> Buat / Cetak Surat
+        </a>
+    </div>
     <div class="space-y-2 text-sm text-on-surface-variant mb-6">
         <p><strong>NIK:</strong> <?= $request['nik'] ?></p>
         <p><strong>Email:</strong> <?= $request['email'] ?: '-' ?></p>
