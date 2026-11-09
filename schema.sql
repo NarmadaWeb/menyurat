@@ -127,3 +127,29 @@ INSERT INTO pengguna (username, password, nama_lengkap, peran_id) VALUES ('admin
 
 -- Insert default village profile
 INSERT INTO profil_desa (nama, alamat, telepon, email, nama_kades) VALUES ('Desa Pendua', 'Jl. Raya Pendua No. 01, Kayangan, Kabupaten Lombok Utara, NTB 83353', '081234567890', 'kontak@pendua.desa.id', 'Abu Bakar, S.Adm');
+
+CREATE TABLE penduduk (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nik VARCHAR(20) NOT NULL UNIQUE,
+    no_kk VARCHAR(20),
+    nama_lengkap VARCHAR(100) NOT NULL,
+    jenis_kelamin ENUM('Laki-laki', 'Perempuan') NOT NULL,
+    tempat_lahir VARCHAR(100),
+    tanggal_lahir DATE,
+    agama VARCHAR(30) DEFAULT 'Islam',
+    pendidikan VARCHAR(50),
+    pekerjaan VARCHAR(100),
+    status_perkawinan VARCHAR(50) DEFAULT 'Belum Kawin',
+    kewarganegaraan VARCHAR(10) DEFAULT 'WNI',
+    alamat TEXT,
+    rt VARCHAR(5) DEFAULT '001',
+    rw VARCHAR(5) DEFAULT '001',
+    telepon VARCHAR(20),
+    dibuat_pada TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert sample penduduk
+INSERT INTO penduduk (nik, no_kk, nama_lengkap, jenis_kelamin, tempat_lahir, tanggal_lahir, agama, pendidikan, pekerjaan, status_perkawinan, kewarganegaraan, alamat, rt, rw, telepon) VALUES
+('5208010101900001', '5208010101900000', 'Ahmad Dahlan', 'Laki-laki', 'Lombok Utara', '1990-01-01', 'Islam', 'S1', 'Wiraswasta', 'Kawin', 'WNI', 'Dusun Karang Baru, RT 01 RW 01, Desa Pendua', '001', '001', '081234567891'),
+('5208014505950002', '5208010101900000', 'Siti Fatimah', 'Perempuan', 'Mataram', '1995-05-15', 'Islam', 'SMA/Sederajat', 'Mengurus Rumah Tangga', 'Kawin', 'WNI', 'Dusun Karang Baru, RT 01 RW 01, Desa Pendua', '001', '001', '081234567892'),
+('5208011212000003', '5208011212000000', 'Budi Santoso', 'Laki-laki', 'Lombok Utara', '2000-12-12', 'Islam', 'D3', 'Karyawan Swasta', 'Belum Kawin', 'WNI', 'Dusun Dasan Makmur, RT 02 RW 01, Desa Pendua', '002', '001', '081234567893');
